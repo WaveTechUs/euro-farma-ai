@@ -20,9 +20,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	return r
 }
 
+
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
-	resp["message"] = "Euro Farma"
+	resp["message"] = "Teste Farma"
 
 	jsonResp, err := json.Marshal(resp)
 	if err != nil {
