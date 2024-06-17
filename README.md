@@ -7,6 +7,9 @@
 $ scoop install migrate
 ```
 
+## Docker
+docker compose up
+
 ## MakeFile
 run the application
 ```bash
