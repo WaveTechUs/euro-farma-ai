@@ -36,6 +36,13 @@ func (s *Server) TestHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
+// HelloWorldHandler retorna uma mensagem simples em JSON.
+// @Summary Exemplo de endpoint Hello World
+// @Description Retorna uma mensagem simples "Teste Farma"
+// @Tags Exemplos
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router / [get]
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
 	resp["message"] = "Teste Farma"
@@ -47,7 +54,13 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 
 	_, _ = w.Write(jsonResp)
 }
-
+// healthHandler retorna o status de saúde do banco de dados em JSON.
+// @Summary Endpoint de verificação de saúde
+// @Description Retorna o status de saúde do banco de dados
+// @Tags Saúde
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /health [get]
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(s.db.Health())
 	_, _ = w.Write(jsonResp)
