@@ -35,6 +35,9 @@ test:
 	@echo "Testing..."
 	@go test ./tests -v
 
+migrate:
+	@migrate -path cmd/migrate/ -database "mysql://wave:wave123@tcp(localhost:3306)/eurofarma?query" -verbose up
+
 # Clean the binary
 clean:
 	@echo "Cleaning..."
