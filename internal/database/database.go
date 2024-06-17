@@ -13,15 +13,10 @@ import (
 	_ "github.com/joho/godotenv/autoload"
 )
 
-// Service represents a service that interacts with a database.
 type Service interface {
-	// Health returns a map of health status information.
-	// The keys and values in the map are service-specific.
 	Health() map[string]string
-
-	// Close terminates the database connection.
-	// It returns an error if the connection cannot be closed.
 	Close() error
+	GetTeste() (map[string]string, error)
 }
 
 type service struct {
@@ -43,11 +38,8 @@ func New() Service {
 		return dbInstance
 	}
 
-	// Opening a driver typically will not attempt to connect to the database.
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname))
 	if err != nil {
-		// This will not be a connection error, but a DSN parse error or
-		// another initialization error.
 		log.Fatal(err)
 	}
 	db.SetConnMaxLifetime(0)
@@ -60,28 +52,23 @@ func New() Service {
 	return dbInstance
 }
 
-// Health checks the health of the database connection by pinging the database.
-// It returns a map with keys indicating various health statistics.
 func (s *service) Health() map[string]string {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
 	stats := make(map[string]string)
 
-	// Ping the database
 	err := s.db.PingContext(ctx)
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
-		log.Fatalf(fmt.Sprintf("db down: %v", err)) // Log the error and terminate the program
+		log.Fatalf(fmt.Sprintf("db down: %v", err))
 		return stats
 	}
 
-	// Database is up, add more statistics
 	stats["status"] = "up"
 	stats["message"] = "It's healthy"
 
-	// Get database stats (like open connections, in use, idle, etc.)
 	dbStats := s.db.Stats()
 	stats["open_connections"] = strconv.Itoa(dbStats.OpenConnections)
 	stats["in_use"] = strconv.Itoa(dbStats.InUse)
@@ -110,11 +97,34 @@ func (s *service) Health() map[string]string {
 	return stats
 }
 
-// Close closes the database connection.
-// It logs a message indicating the disconnection from the specific database.
-// If the connection is successfully closed, it returns nil.
-// If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
+}
+
+func (s *service) GetTeste() (map[string]string, error) {
+	stats := make(map[string]string)
+    stats["message"] = "banco"
+
+    rows, err := s.db.Query("select * from test_table")
+    if err != nil {
+        log.Fatalf("error handling JSON marshal. Err: %v", err)
+    }
+    defer rows.Close()
+
+    result := make(map[string]string)
+    for rows.Next() {
+        var id int
+        var name string
+        if err := rows.Scan(&id, &name); err != nil {
+            log.Fatalf("error handling JSON marshal. Err: %v", err)
+        }
+        result[strconv.Itoa(id)] = name
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+	return result, nil
 }

@@ -14,12 +14,27 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Use(middleware.Logger)
 
 	r.Get("/", s.HelloWorldHandler)
+	r.Get("/test", s.TestHandler)
 
 	r.Get("/health", s.healthHandler)
 
 	return r
 }
 
+func (s *Server) TestHandler(w http.ResponseWriter, r *http.Request) {
+	respQuery, err := s.db.GetTeste()
+
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+
+	jsonResp, err := json.Marshal(respQuery)
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+
+	_, _ = w.Write(jsonResp)
+}
 
 func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	resp := make(map[string]string)
