@@ -1,0 +1,46 @@
+info:
+  contact: {}
+paths:
+  /:
+    get:
+      description: Retorna uma mensagem simples "Teste Farma"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Exemplo de endpoint Hello World
+      tags:
+      - Exemplos
+  /health:
+    get:
+      description: Retorna o status de saúde do banco de dados
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Endpoint de verificação de saúde
+      tags:
+      - Saúde
+  /test:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Exemplo de endpoint Hello World
+swagger: "2.0"

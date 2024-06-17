@@ -1,0 +1,73 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/": {
+            "get": {
+                "description": "Retorna uma mensagem simples \"Teste Farma\"",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Exemplos"
+                ],
+                "summary": "Exemplo de endpoint Hello World",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/health": {
+            "get": {
+                "description": "Retorna o status de saúde do banco de dados",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Saúde"
+                ],
+                "summary": "Endpoint de verificação de saúde",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/test": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Exemplo de endpoint Hello World",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

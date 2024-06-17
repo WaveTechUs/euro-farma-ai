@@ -7,6 +7,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+    httpSwagger "github.com/swaggo/http-swagger"
+    _ "farmaIA/cmd/api/swagger"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
@@ -15,12 +17,19 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	r.Get("/", s.HelloWorldHandler)
 	r.Get("/test", s.TestHandler)
-
 	r.Get("/health", s.healthHandler)
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition
+	))
 
 	return r
 }
 
+// HelloWorldHandler retorna uma mensagem simples em JSON.
+// @Summary Exemplo de endpoint Hello World
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /test [get]
 func (s *Server) TestHandler(w http.ResponseWriter, r *http.Request) {
 	respQuery, err := s.db.GetTeste()
 
@@ -54,6 +63,7 @@ func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 
 	_, _ = w.Write(jsonResp)
 }
+
 // healthHandler retorna o status de saúde do banco de dados em JSON.
 // @Summary Endpoint de verificação de saúde
 // @Description Retorna o status de saúde do banco de dados
