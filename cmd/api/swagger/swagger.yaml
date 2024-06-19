@@ -1,24 +1,18 @@
+definitions:
+  types.Survey:
+    properties:
+      dataCriacao:
+        type: string
+      id:
+        type: integer
+      nome:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
-  /:
-    get:
-      description: Retorna uma mensagem simples "Teste Farma"
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties:
-              type: string
-            type: object
-      summary: Exemplo de endpoint Hello World
-      tags:
-      - Exemplos
   /health:
     get:
-      description: Retorna o status de saúde do banco de dados
       produces:
       - application/json
       responses:
@@ -28,9 +22,21 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Endpoint de verificação de saúde
       tags:
-      - Saúde
+      - Health
+  /survey:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/types.Survey'
+            type: array
+      tags:
+      - Survey
   /test:
     get:
       produces:
@@ -42,5 +48,6 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Exemplo de endpoint Hello World
+      tags:
+      - Test
 swagger: "2.0"

@@ -3,6 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
+	"farmaIA/internal/types"
 	"fmt"
 	"log"
 	"os"
@@ -17,6 +18,7 @@ type Service interface {
 	Health() map[string]string
 	Close() error
 	GetTeste() (map[string]string, error)
+	GetSurveys() ([]types.Survey, error)
 }
 
 type service struct {
@@ -120,6 +122,29 @@ func (s *service) GetTeste() (map[string]string, error) {
             log.Fatalf("error handling JSON marshal. Err: %v", err)
         }
         result[strconv.Itoa(id)] = name
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+	return result, nil
+}
+
+func (s *service) GetSurveys() ([]types.Survey, error) {
+    rows, err := s.db.Query("select * from survey")
+    if err != nil {
+        log.Fatalf("Error on executing query. Err: %v", err)
+    }
+    defer rows.Close()
+
+    result := make([]types.Survey, 0)
+    for rows.Next() {
+        survey := types.Survey{}
+        if err := rows.Scan(&survey.Id, &survey.Nome, &survey.DataCriacao); err != nil {
+            log.Fatalf("Error reading database. Err: %v", err)
+        }
+        result = append(result, survey)
     }
 
     if err := rows.Err(); err != nil {

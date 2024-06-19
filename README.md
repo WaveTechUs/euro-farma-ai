@@ -22,6 +22,11 @@ make run
 ```
 
 run the migrations
-```
+```bash
 make migrate
+```
+
+create migrations
+```bash
+migrate create -ext=sql -dir=cmd/migrate/ -seq init
 ```

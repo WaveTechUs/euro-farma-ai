@@ -15,16 +15,14 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
+        "/health": {
             "get": {
-                "description": "Retorna uma mensagem simples \"Teste Farma\"",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Exemplos"
+                    "Health"
                 ],
-                "summary": "Exemplo de endpoint Hello World",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -38,23 +36,21 @@ const docTemplate = `{
                 }
             }
         },
-        "/health": {
+        "/survey": {
             "get": {
-                "description": "Retorna o status de saúde do banco de dados",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Saúde"
+                    "Survey"
                 ],
-                "summary": "Endpoint de verificação de saúde",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "type": "object",
-                            "additionalProperties": {
-                                "type": "string"
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/types.Survey"
                             }
                         }
                     }
@@ -66,7 +62,9 @@ const docTemplate = `{
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Exemplo de endpoint Hello World",
+                "tags": [
+                    "Test"
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -77,6 +75,22 @@ const docTemplate = `{
                             }
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "types.Survey": {
+            "type": "object",
+            "properties": {
+                "dataCriacao": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "nome": {
+                    "type": "string"
                 }
             }
         }

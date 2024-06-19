@@ -2,31 +2,36 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
+	"os"
+
+	_ "farmaIA/cmd/api/swagger"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-    httpSwagger "github.com/swaggo/http-swagger"
-    _ "farmaIA/cmd/api/swagger"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
-	r.Get("/", s.HelloWorldHandler)
+    swaggerUrl := fmt.Sprintf("http://localhost:%v/swagger/doc.json", os.Getenv("PORT"))
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL(swaggerUrl),
+	))
+
 	r.Get("/test", s.TestHandler)
 	r.Get("/health", s.healthHandler)
-	r.Get("/swagger/*", httpSwagger.Handler(
-		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition
-	))
+
+    r.Get("/survey", s.getSurveyHandler)
 
 	return r
 }
 
-// HelloWorldHandler retorna uma mensagem simples em JSON.
-// @Summary Exemplo de endpoint Hello World
+// @Tags Test
 // @Produce json
 // @Success 200 {object} map[string]string
 // @Router /test [get]
@@ -45,33 +50,25 @@ func (s *Server) TestHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(jsonResp)
 }
 
-// HelloWorldHandler retorna uma mensagem simples em JSON.
-// @Summary Exemplo de endpoint Hello World
-// @Description Retorna uma mensagem simples "Teste Farma"
-// @Tags Exemplos
-// @Produce json
-// @Success 200 {object} map[string]string
-// @Router / [get]
-func (s *Server) HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
-	resp := make(map[string]string)
-	resp["message"] = "Teste Farma"
-
-	jsonResp, err := json.Marshal(resp)
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-
-	_, _ = w.Write(jsonResp)
-}
-
-// healthHandler retorna o status de saúde do banco de dados em JSON.
-// @Summary Endpoint de verificação de saúde
-// @Description Retorna o status de saúde do banco de dados
-// @Tags Saúde
+// @Tags Health
 // @Produce json
 // @Success 200 {object} map[string]string
 // @Router /health [get]
 func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(s.db.Health())
+	_, _ = w.Write(jsonResp)
+}
+
+// @Tags Survey
+// @Produce json
+// @Success 200 {object} []types.Survey
+// @Router /survey [get]
+func (s *Server) getSurveyHandler (w http.ResponseWriter, r *http.Request) {
+    result, err := s.db.GetSurveys()
+    if err != nil {
+        log.Fatalf("Error on getting surveys. Err: %v", err)
+    }
+
+	jsonResp, _ := json.Marshal(result)
 	_, _ = w.Write(jsonResp)
 }
