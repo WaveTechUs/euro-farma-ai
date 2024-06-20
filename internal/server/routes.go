@@ -8,6 +8,7 @@ import (
 	"os"
 
 	_ "farmaIA/cmd/api/swagger"
+	"farmaIA/internal/services"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -27,6 +28,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r.Get("/health", s.healthHandler)
 
     r.Get("/survey", s.getSurveyHandler)
+    r.Get("/gemini", s.geminiHandler)
 
 	return r
 }
@@ -71,4 +73,8 @@ func (s *Server) getSurveyHandler (w http.ResponseWriter, r *http.Request) {
 
 	jsonResp, _ := json.Marshal(result)
 	_, _ = w.Write(jsonResp)
+}
+
+func (s *Server) geminiHandler (w http.ResponseWriter, r *http.Request) {
+    services.Gemini()
 }
