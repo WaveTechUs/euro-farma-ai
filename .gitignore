@@ -14,6 +14,10 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+#Swagger Files
+/cmd/api/swagger/docs.go
+/cmd/api/swagger/swagger.json
+/cmd/api/swagger/swagger.yaml
 # Go workspace file
 go.work
 tmp/
