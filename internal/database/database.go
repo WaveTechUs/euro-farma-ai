@@ -16,6 +16,12 @@ import (
 
 type Service interface {
 	Health() map[string]string
+<<<<<<< HEAD
+=======
+    HelloWorld()  map[string]string
+	// Close terminates the database connection.
+	// It returns an error if the connection cannot be closed.
+>>>>>>> b85a42f (feat: Added individual routes file)
 	Close() error
 	GetTeste() (map[string]string, error)
 	GetSurveys() ([]types.Survey, error)
@@ -99,6 +105,19 @@ func (s *service) Health() map[string]string {
 	return stats
 }
 
+<<<<<<< HEAD
+=======
+func (s *service) HelloWorld()  map[string]string{ 
+	resp := make(map[string]string)
+	resp["message"] = "Teste Farma"
+    return resp
+}
+
+// Close closes the database connection.
+// It logs a message indicating the disconnection from the specific database.
+// If the connection is successfully closed, it returns nil.
+// If an error occurs while closing the connection, it returns the error.
+>>>>>>> b85a42f (feat: Added individual routes file)
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
