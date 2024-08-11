@@ -8,6 +8,7 @@ import (
     "farmaIA/internal/healthcheck"
     "farmaIA/internal/helloworld" 
     "farmaIA/internal/database"
+    "farmaIA/internal/user"
     "farmaIA/cmd/api/swagger"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -19,9 +20,12 @@ func (s *Server) RegisterRoutes() http.Handler {
     
     service := database.New()
 
+
     healthHandler := healthcheck.NewHandler(service)
     healthHandler.RegisterHandlers(r)
     
+    userHandler := user.NewHandler(service)
+    userHandler.RegisterHandlers(r)
 // @Tags HelloWorld
 // @Produce json
 // @Success 200 {object} map[string]string

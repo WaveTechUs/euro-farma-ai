@@ -17,6 +17,7 @@ import (
 type Service interface {
 	Health() map[string]string
     HelloWorld()  map[string]string
+    User()  map[string]string
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
@@ -105,6 +106,16 @@ func (s *service) Health() map[string]string {
 func (s *service) HelloWorld()  map[string]string{ 
 	resp := make(map[string]string)
 	resp["message"] = "Teste Farma"
+    return resp
+}
+
+func (s *service) User()  map[string]string{ 
+	resp := make(map[string]string)
+	resp["id"] = "1"
+	resp["name"] = "jose"
+	resp["email"] = "j@j.com"
+	resp["password"] = "123"
+	resp["role"] = "admin"
     return resp
 }
 
