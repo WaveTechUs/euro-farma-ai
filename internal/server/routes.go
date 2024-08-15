@@ -2,14 +2,15 @@ package server
 
 import (
 	"encoding/json"
+	"farmaIA/cmd/api/swagger"
+	"farmaIA/internal/database"
+	"farmaIA/internal/gemini"
+	"farmaIA/internal/healthcheck"
+	"farmaIA/internal/helloworld"
+	"farmaIA/internal/user"
 	"log"
-	"farmaIA/internal/services"
 	"net/http"
-    "farmaIA/internal/healthcheck"
-    "farmaIA/internal/helloworld" 
-    "farmaIA/internal/database"
-    "farmaIA/internal/user"
-    "farmaIA/cmd/api/swagger"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -32,11 +33,13 @@ func (s *Server) RegisterRoutes() http.Handler {
 // @Router /helloworld [get]
     helloWorldHandler := helloworld.NewHandler(service)
     helloWorldHandler.RegisterHandlers(r)
+
+    geminiHandler := gemini.NewHandler(service)
+    geminiHandler.RegisterRoutes(r)
     
     swagger.SwaggerHandler(r)
 
     r.Get("/survey", s.getSurveyHandler)
-    r.Get("/gemini", s.geminiHandler)
 
 	return r
 }
@@ -54,8 +57,3 @@ func (s *Server) getSurveyHandler (w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(result)
 	_, _ = w.Write(jsonResp)
 }
-
-func (s *Server) geminiHandler (w http.ResponseWriter, r *http.Request) {
-    services.Gemini()
-}
-

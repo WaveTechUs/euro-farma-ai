@@ -18,6 +18,7 @@ type Service interface {
 	Health() map[string]string
     HelloWorld()  map[string]string
     User()  map[string]string
+    Gemini()
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
@@ -176,4 +177,8 @@ func (s *service) GetSurveys() ([]types.Survey, error) {
     }
 
 	return result, nil
+}
+
+func (s *service) Gemini() {
+    fmt.Println("do banco aqui")
 }
