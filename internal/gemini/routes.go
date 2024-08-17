@@ -3,7 +3,6 @@ package gemini
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,57 +21,60 @@ func NewHandler(service GeminiService) *Handler {
 }
 
 func (h *Handler) RegisterRoutes(r *chi.Mux) {
-	r.Get("/gemini", h.geminiHandler)
-	r.Post("/gemini", h.geminiHandlerChat)
-}
-
-func (s *Handler) geminiHandlerChat(w http.ResponseWriter, r *http.Request) {
-    geminiRequest := GeminiRequest{}
-    err := json.NewDecoder(r.Body).Decode(&geminiRequest)
-    if err != nil {
-        log.Fatalf("Error on decoding request. Err: %v", err)
-    }
-
-    fmt.Println(geminiRequest.Text)
+	r.Post("/gemini", h.geminiHandler)
 }
 
 func (s *Handler) geminiHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp := s.Gemini()
+	input := s.getBody(r)
+	jsonResp := s.Gemini(input)
 	_, _ = w.Write(jsonResp)
 }
 
-func (h *Handler) Gemini() []byte {
+func (h *Handler) Gemini(body GeminiRequest) []byte {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, option.WithAPIKey(os.Getenv("API_KEY")))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer client.Close()
+	model := configureGemini(client)
+	cs := model.StartChat()
 
-    model := configureGemini(client)
-	resp, err := model.GenerateContent(ctx, genai.Text("Faça um resumo do livro frankenstein de mary shelley"))
+	makeHistory(cs, body.History)
+
+	res, err := cs.SendMessage(ctx, genai.Text(body.Text))
 	if err != nil {
-		log.Printf("error: %v", err)
+		log.Fatal(err)
 	}
 
-	jsonResp := stringResponse(resp)
+	jsonResp := getJsonReponse(res)
 	return jsonResp
+}
+
+func makeHistory(cs *genai.ChatSession, gr []History) {
+	cs.History = make([]*genai.Content, len(gr))
+
+	for i, item := range gr {
+		cs.History[i] = &genai.Content{
+			Parts: []genai.Part{
+				genai.Text(item.OldText),
+			},
+			Role: item.Role,
+		}
+	}
 }
 
 func configureGemini(client *genai.Client) *genai.GenerativeModel {
 	model := client.GenerativeModel("gemini-1.5-flash")
-	model.GenerationConfig = genai.GenerationConfig{
-		ResponseMIMEType: "application/json",
-	}
 	return model
 }
 
-func stringResponse(resp *genai.GenerateContentResponse) []byte {
+func getJsonReponse(resp *genai.GenerateContentResponse) []byte {
 	var jsonResult []byte
 
 	for _, c := range resp.Candidates {
 		if c.Content != nil {
-			jsonBytes, err := json.MarshalIndent(*c.Content, "", "")
+			jsonBytes, err := json.Marshal(*c.Content)
 			if err != nil {
 				log.Fatal(err)
 			}
@@ -80,6 +82,14 @@ func stringResponse(resp *genai.GenerateContentResponse) []byte {
 			jsonResult = jsonBytes
 		}
 	}
-
 	return jsonResult
+}
+
+func (s *Handler) getBody(r *http.Request) GeminiRequest {
+    gr := GeminiRequest{}
+    err := json.NewDecoder(r.Body).Decode(&gr)
+    if err != nil {
+        log.Fatalf("Error on decoding request. Err: %v", err)
+    }
+    return gr
 }
