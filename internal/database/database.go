@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
-	"farmaIA/internal/types"
+	types "farmaIA/internal/services"
 	"fmt"
 	"log"
 	"os"

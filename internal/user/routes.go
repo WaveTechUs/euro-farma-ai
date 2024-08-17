@@ -5,7 +5,7 @@ import (
     "encoding/json"
     "net/http"
 	"log"
-    "golang.org/x/crypto/bcrypt"
+    utils "farmaIA/pkg/utils"
 )
 
 type Handler struct{
@@ -38,9 +38,8 @@ func (h *Handler) userHandlerRegister(w http.ResponseWriter, r *http.Request){
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
-    
+    cPassword, _ := utils.Encryption(data["password"]) 
 
-    cPassword, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 14)
     newUser := User{
         Name: data["name"],
         Email: data["email"],

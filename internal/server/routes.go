@@ -13,11 +13,17 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+    "github.com/go-chi/cors"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+    r.Use(cors.Handler( cors.Options{
+    AllowedOrigins: []string{"*"},
+    AllowedMethods: []string{"GET", "POST","PUT","DELETE","OPTIONS"},
+    AllowedHeaders: []string{"Content-type"},
+    }))
     
     service := database.New()
 
@@ -46,7 +52,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 // @Tags Survey
 // @Produce json
-// @Success 200 {object} []types.Survey
+// @Success 200 {object} map[string]string
 // @Router /survey [get]
 func (s *Server) getSurveyHandler (w http.ResponseWriter, r *http.Request) {
     result, err := s.db.GetSurveys()

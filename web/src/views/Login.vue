@@ -2,8 +2,8 @@
 import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo } from '@/composables/Utils';
-
-
+import { getUser } from '@/composables/User';
+getUser();
 </script>
 
 <template>
