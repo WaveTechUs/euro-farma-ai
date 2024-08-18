@@ -3,7 +3,6 @@ import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo } from '@/composables/Utils';
 import { getUser } from '@/composables/User';
-getUser();
 </script>
 
 <template>
@@ -30,7 +29,7 @@ getUser();
                     <a href="#"
                         class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700" @click="useGoTo('/criar-conta')">Não
                         possui conta?</a>
-                    <button type="submit"
+                    <button type="submit" @click="getUser()"
                         class="w-2/5 py-3 px-4  bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 
                         Entrar
