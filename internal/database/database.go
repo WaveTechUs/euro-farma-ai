@@ -3,7 +3,8 @@ package database
 import (
 	"context"
 	"database/sql"
-	"farmaIA/internal/types"
+	types "farmaIA/internal/services"
+	users "farmaIA/internal/user"
 	"fmt"
 	"log"
 	"os"
@@ -17,12 +18,14 @@ import (
 type Service interface {
 	Health() map[string]string
     HelloWorld()  map[string]string
-    User()  map[string]string
+    GetUserTest()  map[string]string
+    Gemini()
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
 	GetTeste() (map[string]string, error)
 	GetSurveys() ([]types.Survey, error)
+    GetUsers() ([]users.User,error) 
 }
 
 type service struct {
@@ -109,7 +112,7 @@ func (s *service) HelloWorld()  map[string]string{
     return resp
 }
 
-func (s *service) User()  map[string]string{ 
+func (s *service) GetUserTest()  map[string]string{ 
 	resp := make(map[string]string)
 	resp["id"] = "1"
 	resp["name"] = "jose"
@@ -177,3 +180,31 @@ func (s *service) GetSurveys() ([]types.Survey, error) {
 
 	return result, nil
 }
+
+func (s *service) GetUsers() ([]users.User, error) {
+    rows, err := s.db.Query("select * from user")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    result := make([]users.User, 0)
+    for rows.Next() {
+        user := users.User{}
+        if err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Role); err != nil {
+            log.Fatalf("Error reading database. Err: %v", err)
+        }
+        result = append(result, user)
+    }
+
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+
+	return result, nil
+}
+
+func (s *service) Gemini() {
+    fmt.Println("do banco aqui")
+}
+

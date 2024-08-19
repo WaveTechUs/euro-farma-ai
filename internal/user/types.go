@@ -9,6 +9,7 @@ type User struct{
 }
 
 type UserService interface{
-    User() map[string]string
+    GetUserTest() map[string]string
+    GetUsers() ([]User,error) 
 }
 

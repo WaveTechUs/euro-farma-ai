@@ -18,6 +18,7 @@
 /cmd/api/swagger/docs.go
 /cmd/api/swagger/swagger.json
 /cmd/api/swagger/swagger.yaml
+/to-do.md
 # Go workspace file
 go.work
 tmp/

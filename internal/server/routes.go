@@ -2,21 +2,28 @@ package server
 
 import (
 	"encoding/json"
+	"farmaIA/cmd/api/swagger"
+	"farmaIA/internal/database"
+	"farmaIA/internal/gemini"
+	"farmaIA/internal/healthcheck"
+	"farmaIA/internal/helloworld"
+	"farmaIA/internal/user"
 	"log"
-	"farmaIA/internal/services"
 	"net/http"
-    "farmaIA/internal/healthcheck"
-    "farmaIA/internal/helloworld" 
-    "farmaIA/internal/database"
-    "farmaIA/internal/user"
-    "farmaIA/cmd/api/swagger"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+    "github.com/go-chi/cors"
 )
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+    r.Use(cors.Handler( cors.Options{
+    AllowedOrigins: []string{"*"},
+    AllowedMethods: []string{"GET", "POST","PUT","DELETE","OPTIONS"},
+    AllowedHeaders: []string{"Content-type"},
+    }))
     
     service := database.New()
 
@@ -32,18 +39,20 @@ func (s *Server) RegisterRoutes() http.Handler {
 // @Router /helloworld [get]
     helloWorldHandler := helloworld.NewHandler(service)
     helloWorldHandler.RegisterHandlers(r)
+
+    geminiHandler := gemini.NewHandler(service)
+    geminiHandler.RegisterRoutes(r)
     
     swagger.SwaggerHandler(r)
 
     r.Get("/survey", s.getSurveyHandler)
-    r.Get("/gemini", s.geminiHandler)
 
 	return r
 }
 
 // @Tags Survey
 // @Produce json
-// @Success 200 {object} []types.Survey
+// @Success 200 {object} map[string]string
 // @Router /survey [get]
 func (s *Server) getSurveyHandler (w http.ResponseWriter, r *http.Request) {
     result, err := s.db.GetSurveys()
@@ -54,8 +63,3 @@ func (s *Server) getSurveyHandler (w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(result)
 	_, _ = w.Write(jsonResp)
 }
-
-func (s *Server) geminiHandler (w http.ResponseWriter, r *http.Request) {
-    services.Gemini()
-}
-

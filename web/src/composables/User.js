@@ -1,14 +1,20 @@
-import axios from "axios";
-const URL = 'http://localhost:8080/';
+import axios from 'axios';
+import { useGoTo } from '@/composables/Utils';
 
-export const listUser =()=>{
+export async function getUser() {
+    const email = "j@j.com"
+    const password = "123"
     try {
-        let resp = axios.get('http://localhost:8080/user')
-        console.log(resp.data);       
-        return resp.data
-
+        const response = await axios.post('http://localhost:8080/user/test/login', 
+        {
+            email: email,
+            password: password
+        });
+        console.log('Status:', response.status);
+        console.log('Data:', response.data);
     } catch (error) {
-        console.error(error)
+        console.error('Error fetching user:', error.message);
     }
+    useGoTo('/dashboard')
 }
 
