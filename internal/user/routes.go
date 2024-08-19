@@ -56,8 +56,7 @@ func (h *Handler) userHandler(w http.ResponseWriter, r *http.Request) {
 // @Router /user/register [Post]
 func (h *Handler) userHandlerRegister(w http.ResponseWriter, r *http.Request){
     var data map[string]string
-''
-    if err := json.NewDecoder(r.Body).Decode(&data); err != nil{
+   if err := json.NewDecoder(r.Body).Decode(&data); err != nil{
         http.Error(w, err.Error(), http.StatusBadRequest)
         return
     }
