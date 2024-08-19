@@ -17,25 +17,23 @@ func NewHandler(service UserService) *Handler {
     return &Handler{service: service}
 }
 
+
 func (h *Handler) RegisterHandlers(r *chi.Mux)  {
-// @Tags User
-// @Produce json
-// @Success 200 {object} map[string]string
-// @Router /user [get]
     r.Get("/user", h.userHandler)
-// @Tags User Test
-// @Produce json
-// @Success 200 {object} map[string]string
-// @Router /user/test [get]
     r.Get("/user/test", h.userHandlerTest)
-// @Tags User Login Test
-// @Produce json
-// @Success 200 {object} map[string]string
-// @Router /user/test/login [Post]
     r.Post("/user/test/login", h.userHandlerLoginTest)
     r.Post("/user/register", h.userHandlerRegister)
 }
 
+// Get Users
+// @Summary      Show all users
+// @Description  get string
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  map[string]string
+// @Failure      500  {object}  string
+// @Router       /user [get]
 func (h *Handler) userHandler(w http.ResponseWriter, r *http.Request) {
     users, err := h.service.GetUsers()
     if err != nil {
@@ -45,7 +43,17 @@ func (h *Handler) userHandler(w http.ResponseWriter, r *http.Request) {
 	jsonResp, _ := json.Marshal(users)
 	_, _ = w.Write(jsonResp)
 }
-
+// User Register
+// @Tags User 
+// @Summary      insert user 
+// @Description  post string
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Success 200 {object} map[string]string
+// @Failure      400  {object}  string
+// @Failure      500  {object}  string
+// @Router /user/register [Post]
 func (h *Handler) userHandlerRegister(w http.ResponseWriter, r *http.Request){
     var data map[string]string
 
@@ -69,7 +77,16 @@ func (h *Handler) userHandlerRegister(w http.ResponseWriter, r *http.Request){
 	}
     // Adicionar no Banco
 }
-
+// User Login Test
+// @Tags User
+// @Summary      insert user test
+// @Description  post string
+// @Produce json
+// @Failure      400  {object}  string
+// @Failure      400  {object}  string
+// @Failure      400  {object}  string
+// @Success 200 {object} string
+// @Router /user/test/login [Post]
 func (h *Handler) userHandlerLoginTest(w http.ResponseWriter, r *http.Request){
     var data map[string]string  
 
@@ -97,7 +114,11 @@ func (h *Handler) userHandlerLoginTest(w http.ResponseWriter, r *http.Request){
 
 	_, _ = w.Write(jsonResp)
 }
-
+// User Test
+// @Tags User
+// @Produce json
+// @Success 200 {object} map[string]string
+// @Router /user/test [get]
 func (h *Handler) userHandlerTest(w http.ResponseWriter, r *http.Request)  {
 	resp := make(map[string]string)
 	resp["id"] = "1"

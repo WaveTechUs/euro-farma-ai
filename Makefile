@@ -39,15 +39,18 @@ test:
 migrate:
 	@migrate -path cmd/migrate/ -database "mysql://wave:wave123@tcp(localhost:3306)/eurofarma?query" -verbose up
 
-# Clean the binary
+# Clean the binary	
 clean:
 	@echo "Cleaning..."
 	@rm -f main
 
 # Swagger init
-swag:
+swag:	
 	@swag init -o .\cmd\api\swagger\ -g .\internal\server\routes.go
 
+#Web Run
+web:
+	@npm run dev --prefix .\web
 # Live Reload
 watch:
 	@if command -v air > /dev/null; then \
