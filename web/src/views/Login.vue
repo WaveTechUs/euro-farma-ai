@@ -1,14 +1,47 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
-import { useGoTo } from '@/composables/Utils';
-import { listUser } from '@/composables/User';
+import { useGoTo, useToast } from '@/composables/Utils';
+import { getUser } from '@/composables/User';
+const teste = async () => {
+    const get = await getUser('j@j.com', '123')
+    console.log(get);
 
-onMounted(async()=>{
-    await listUser()
+    if (get) {
+        navigator.clipboard.writeText(get)
+            .then(() => {
+                useToast().success('Seja bem vindo de volta!', {
+                    timeout: 1500,
+                    style: {
+                        fontSize: '16px',
+                        width: '250px',
+                        height: '50px'
+                    }
+                })
+                console.log('Texto copiado com sucesso!');
+                useGoTo('/dashboard')
+
+            })
+            .catch((error) => {
+
+                console.error('Falha ao copiar o texto:', error);
+            });
+    }else{
+        useToast().error('Deu erro fera', {
+                    timeout: 1500,
+                    style: {
+                        fontSize: '16px',
+                        width: '250px',
+                        height: '50px'
+                    }
+                })
+    }
+
+}
+onMounted(async () => {
+    await teste()
 
 })
-import { getUser } from '@/composables/User';
 </script>
 
 <template>
@@ -28,12 +61,14 @@ import { getUser } from '@/composables/User';
                     <input type="password" id="password" name="password" required
                         class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                     <a href="#"
-                        class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700" >Esqueceu a senha?</a>
+                        class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700">Esqueceu
+                        a senha?</a>
                 </div>
                 <div
                     class="flex flex-row mt-10 xl:mt-8 justify-between align-middle w-full   px-2  h-auto  rounded-lg ">
                     <a href="#"
-                        class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700" @click="useGoTo('/criar-conta')">Não
+                        class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700"
+                        @click="useGoTo('/criar-conta')">Não
                         possui conta?</a>
                     <button type="submit" @click="getUser()"
                         class="w-2/5 py-3 px-4  bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

@@ -32,6 +32,48 @@ import MainLayout from './../layout/MainLayout.vue'
                                 <p class="mt-5 text-slate-500">chat</p>
 
                         </div>
+                        <div class="card text-left rounded-md my-12 md:w-2/3 rounded-tl-none p-2 bg-white h-auto shadow-md">
+                            <p class="text-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit, illo. Eaque
+                                odio saepe quas eum numquam, rerum quia beatae, est, nam dignissimos sapiente perferendis
+                                velit molestias commodi totam exercitationem corporis?</p>
+                                <p class="mt-5 text-slate-500">chat</p>
+
+                        </div>
+                        <div class="card text-left rounded-md my-12 md:w-2/3 rounded-tl-none p-2 bg-white h-auto shadow-md">
+                            <p class="text-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit, illo. Eaque
+                                odio saepe quas eum numquam, rerum quia beatae, est, nam dignissimos sapiente perferendis
+                                velit molestias commodi totam exercitationem corporis?</p>
+                                <p class="mt-5 text-slate-500">chat</p>
+
+                        </div>
+                        <div class="card text-left rounded-md my-12 md:w-2/3 rounded-tl-none p-2 bg-white h-auto shadow-md">
+                            <p class="text-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit, illo. Eaque
+                                odio saepe quas eum numquam, rerum quia beatae, est, nam dignissimos sapiente perferendis
+                                velit molestias commodi totam exercitationem corporis?</p>
+                                <p class="mt-5 text-slate-500">chat</p>
+
+                        </div>
+                        <div class="card text-left rounded-md my-12 md:w-2/3 rounded-tl-none p-2 bg-white h-auto shadow-md">
+                            <p class="text-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit, illo. Eaque
+                                odio saepe quas eum numquam, rerum quia beatae, est, nam dignissimos sapiente perferendis
+                                velit molestias commodi totam exercitationem corporis?</p>
+                                <p class="mt-5 text-slate-500">chat</p>
+
+                        </div>
+                        <div class="card text-left rounded-md my-12 md:w-2/3 rounded-tl-none p-2 bg-white h-auto shadow-md">
+                            <p class="text-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit, illo. Eaque
+                                odio saepe quas eum numquam, rerum quia beatae, est, nam dignissimos sapiente perferendis
+                                velit molestias commodi totam exercitationem corporis?</p>
+                                <p class="mt-5 text-slate-500">chat</p>
+
+                        </div>
+                        <div class="card text-left rounded-md my-12 md:w-2/3 rounded-tl-none p-2 bg-white h-auto shadow-md">
+                            <p class="text-sm">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Sit, illo. Eaque
+                                odio saepe quas eum numquam, rerum quia beatae, est, nam dignissimos sapiente perferendis
+                                velit molestias commodi totam exercitationem corporis?</p>
+                                <p class="mt-5 text-slate-500">chat</p>
+
+                        </div>
                   
             
                     </div>
