@@ -2,14 +2,18 @@
 import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo } from '@/composables/Utils';
+import { listUser } from '@/composables/User';
 
+onMounted(async()=>{
+    await listUser()
 
+})
 </script>
 
 <template>
     <div class="w-full h-full flex items-center justify-center  bg-gray-900">
         <div
-            class="w-3/12 h-8/10 md:h-3/5 xl:h-4/5 md:w-7/12 xl:w-3/12 bg-slate-50 rounded-2xl p-5 flex flex-col justify-between ">
+            class="w-3/12 h-8/10 md:h-3/5 xl:h-4/6 md:w-4/12 xl:w-3/12 bg-slate-50 rounded-2xl p-5 flex flex-col justify-between ">
             <img class="w-2/3 text-center mx-auto" src="../assets/images/eurofarma-logo.png" alt="">
             <form class="flex flex-col  w-full  h-auto">
                 <div class="flex flex-col  h-auto p-1   rounded-lg ">
