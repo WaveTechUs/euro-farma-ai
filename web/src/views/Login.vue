@@ -3,43 +3,48 @@ import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo, useToast } from '@/composables/Utils';
 import { getUser } from '@/composables/User';
+// const teste = async () => {
+//     const get = await getUser('j@j.com', '123')
+//     console.log(get);
+
+//     if (get) {
+//         navigator.clipboard.writeText(get)
+//             .then(() => {
+//                 useToast().success('Seja bem vindo de volta!', {
+//                     timeout: 1500,
+//                     style: {
+//                         fontSize: '16px',
+//                         width: '250px',
+//                         height: '50px'
+//                     }
+//                 })
+//                 console.log('Texto copiado com sucesso!');
+//                 useGoTo('/dashboard')
+
+//             })
+//             .catch((error) => {
+
+//                 console.error('Falha ao copiar o texto:', error);
+//             });
+//     }else{
+//         useToast().error('Deu erro fera', {
+//                     timeout: 1500,
+//                     style: {
+//                         fontSize: '16px',
+//                         width: '250px',
+//                         height: '50px'
+//                     }
+//                 })
+//     }
+
+// }
 const teste = async () => {
-    const get = await getUser('j@j.com', '123')
-    console.log(get);
+    useGoTo('/dashboard')
 
-    if (get) {
-        navigator.clipboard.writeText(get)
-            .then(() => {
-                useToast().success('Seja bem vindo de volta!', {
-                    timeout: 1500,
-                    style: {
-                        fontSize: '16px',
-                        width: '250px',
-                        height: '50px'
-                    }
-                })
-                console.log('Texto copiado com sucesso!');
-                useGoTo('/dashboard')
-
-            })
-            .catch((error) => {
-
-                console.error('Falha ao copiar o texto:', error);
-            });
-    }else{
-        useToast().error('Deu erro fera', {
-                    timeout: 1500,
-                    style: {
-                        fontSize: '16px',
-                        width: '250px',
-                        height: '50px'
-                    }
-                })
-    }
 
 }
 onMounted(async () => {
-    await teste()
+    // await teste()
 
 })
 </script>
@@ -70,7 +75,7 @@ onMounted(async () => {
                         class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700"
                         @click="useGoTo('/criar-conta')">Não
                         possui conta?</a>
-                    <button type="submit" @click="getUser()"
+                    <button type="submit" @click="teste()"
                         class="w-2/5 py-3 px-4  bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 
                         Entrar

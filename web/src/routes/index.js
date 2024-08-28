@@ -16,7 +16,7 @@ const router = createRouter({
     { path: '/criar-conta', component: () => import('../views/CriarConta.vue')},
     { path: '/dashboard', component: () => import('../views/Dashboard.vue')},
     { path: '/chat', component: () => import('../views/Chat.vue')},
-    // { path: '/experiencia', component: () => import('../views/MinhaExperiencia.vue')},
+    { path: '/informacoes', component: () => import('../views/Infos.vue')},
     // { path: '/contato', component: () => import('../views/Contato.vue')},
    
   ]

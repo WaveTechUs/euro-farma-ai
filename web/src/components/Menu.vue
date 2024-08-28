@@ -38,7 +38,7 @@ onMounted(()=>{
       <h1 class="text-4xl text-white">Brand.</h1>
       <ul class="h-auto flex justify-center flex-col items-center">
         <li
-          @click="useGoTo('/')"
+          @click="useGoTo('/dashboard')"
           :class="{'h-10 flex justify-center items-center rounded-xl cursor-pointer mb-5 px-4 bg-gray-800 w-4/5 bg-opacity-95' : !page, 
         'h-10 flex justify-center items-center rounded-xl cursor-pointer mb-2 px-4 w-4/5' : page }"
         >
@@ -60,16 +60,24 @@ onMounted(()=>{
           <p class="text-white text-xl flex w-10/12 items-center">Chat</p>
         </li>
         <li
-          @click="useGoTo('/chat')"
+          @click="useGoTo('/Informacoes')"
            class=" h-10 flex justify-center items-center rounded-xl cursor-pointer mb-2 px-4 w-4/5"
         >
         <i class="fa-solid fa-circle-info w-2/12 pr-2 my-auto" style="color: yellow;"></i>
 
           <p style="color: yellow;" class=" text-xl flex w-10/12 items-center">Informações</p>
         </li>
+        <li
+          @click="useGoTo('/')"
+           class=" h-10 flex justify-center items-center rounded-xl cursor-pointer mb-2 px-4 w-4/5"
+        >
+        <i class="fa-solid fa-right-from-bracket w-2/12 pr-2 my-auto" style="color: #e00b0b;"></i>
+          <p style="color: #e00b0b;" class=" text-xl flex w-10/12 items-center">Sair</p>
+        </li>
    
       </ul>
     </div>
+    
     <div
       class="absolute -rotate-90 w-auto h-8 top-5 transition-all duration-300"
       :class="{ '-right-5': x, '-right-4': !x }"
