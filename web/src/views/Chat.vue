@@ -27,7 +27,7 @@ const testando = async () => {
     };
     history.value.push(userMessage);
 
-    const answear = await PostAsk(asking.value);
+    const answear = await PostAsk(asking.value, history.value);
     let resp = formatAnswear(answear);
 
     if (answear) {
@@ -38,6 +38,8 @@ const testando = async () => {
         history.value.push(modelResponse);
     }
 
+    console.log(history.value);
+    
     nextTick(() => {
         setTimeout(() => {
             if (messageContainer.value) {

@@ -1,9 +1,10 @@
 import axios from 'axios';
-export async function PostAsk(ask) {
+export async function PostAsk(ask, history) {
     try {
         const response = await axios.post('http://localhost:8080/gemini', 
         {
             Text:ask ,
+            History:history
         });        
         console.log('Status:', response.status);
         console.log('Data:', response.data);
