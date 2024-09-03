@@ -11,7 +11,7 @@ let page = ref('')
 function teste() {
   x.value = !x.value;
 }
-
+//Código lixo mal feito, por favor MUDAR O NOME "TESTE" DAS FUNÇOES.
 onMounted(()=>{
   if(route.path == '/chat') page = true
   else page = false
