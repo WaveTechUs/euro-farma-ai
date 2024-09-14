@@ -1,4 +1,4 @@
-INSERT INTO survey (createdAt, description, topic, status, resumo, conclusions, method, keywords)
+INSERT INTO survey (createdAt, description, topic, status, summary, conclusions, method, keywords)
 VALUES 
 ('2023-09-01', 'Study on the effects of drug interactions in elderly patients', 'Pharmacy', 'Completed', 'This study investigates the impact of common drug interactions in the elderly population.', 'The findings indicate a significant increase in adverse reactions with certain drug combinations.', 'Qualitative analysis based on patient records', 'drug interactions, elderly, adverse effects'),
 

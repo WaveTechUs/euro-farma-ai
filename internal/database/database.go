@@ -3,7 +3,7 @@ package database
 import (
 	"context"
 	"database/sql"
-	types "farmaIA/internal/services"
+	surveys "farmaIA/internal/survey"
 	users "farmaIA/internal/user"
 	"fmt"
 	"log"
@@ -17,15 +17,16 @@ import (
 
 type Service interface {
 	Health() map[string]string
-    HelloWorld()  map[string]string
-    GetUserTest()  map[string]string
-    Gemini()
+	HelloWorld() map[string]string
+	GetUserTest() map[string]string
+	Gemini()
 	// Close terminates the database connection.
 	// It returns an error if the connection cannot be closed.
 	Close() error
 	GetTeste() (map[string]string, error)
-	GetSurveys() ([]types.Survey, error)
-    GetUsers() ([]users.User,error) 
+	GetUsers() ([]users.User, error)
+
+	GetSurveys() ([]surveys.Survey, error)
 }
 
 type service struct {
@@ -59,6 +60,39 @@ func New() Service {
 		db: db,
 	}
 	return dbInstance
+}
+
+func (s *service) GetSurveys() ([]surveys.Survey, error) {
+	rows, err := s.db.Query("SELECT id, createdAt, description, topic, status, summary, conclusions, `method`, keywords FROM survey;")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make([]surveys.Survey, 0)
+	for rows.Next() {
+		survey := surveys.Survey{}
+		if err := rows.Scan(
+			&survey.Id,
+			&survey.CreatedAt,
+			&survey.Description,
+			&survey.Topic,
+			&survey.Status,
+			&survey.Summary,
+			&survey.Conclusions,
+			&survey.Method,
+			&survey.Keywords,
+		); err != nil {
+			log.Fatalf("Error reading database. Err: %v", err)
+		}
+		result = append(result, survey)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }
 
 func (s *service) Health() map[string]string {
@@ -106,20 +140,20 @@ func (s *service) Health() map[string]string {
 	return stats
 }
 
-func (s *service) HelloWorld()  map[string]string{ 
+func (s *service) HelloWorld() map[string]string {
 	resp := make(map[string]string)
 	resp["message"] = "Teste Farma"
-    return resp
+	return resp
 }
 
-func (s *service) GetUserTest()  map[string]string{ 
+func (s *service) GetUserTest() map[string]string {
 	resp := make(map[string]string)
 	resp["id"] = "1"
 	resp["name"] = "jose"
 	resp["email"] = "j@j.com"
 	resp["password"] = "123"
 	resp["role"] = "admin"
-    return resp
+	return resp
 }
 
 // Close closes the database connection.
@@ -133,78 +167,54 @@ func (s *service) Close() error {
 
 func (s *service) GetTeste() (map[string]string, error) {
 	stats := make(map[string]string)
-    stats["message"] = "banco"
+	stats["message"] = "banco"
 
-    rows, err := s.db.Query("select * from test_table")
-    if err != nil {
-        log.Fatalf("error handling JSON marshal. Err: %v", err)
-    }
-    defer rows.Close()
+	rows, err := s.db.Query("select * from test_table")
+	if err != nil {
+		log.Fatalf("error handling JSON marshal. Err: %v", err)
+	}
+	defer rows.Close()
 
-    result := make(map[string]string)
-    for rows.Next() {
-        var id int
-        var name string
-        if err := rows.Scan(&id, &name); err != nil {
-            log.Fatalf("error handling JSON marshal. Err: %v", err)
-        }
-        result[strconv.Itoa(id)] = name
-    }
+	result := make(map[string]string)
+	for rows.Next() {
+		var id int
+		var name string
+		if err := rows.Scan(&id, &name); err != nil {
+			log.Fatalf("error handling JSON marshal. Err: %v", err)
+		}
+		result[strconv.Itoa(id)] = name
+	}
 
-    if err := rows.Err(); err != nil {
-        return nil, err
-    }
-
-	return result, nil
-}
-
-func (s *service) GetSurveys() ([]types.Survey, error) {
-    rows, err := s.db.Query("select * from survey")
-    if err != nil {
-        log.Fatalf("Error on executing query. Err: %v", err)
-    }
-    defer rows.Close()
-
-    result := make([]types.Survey, 0)
-    for rows.Next() {
-        survey := types.Survey{}
-        if err := rows.Scan(&survey.Id, &survey.Nome, &survey.DataCriacao); err != nil {
-            log.Fatalf("Error reading database. Err: %v", err)
-        }
-        result = append(result, survey)
-    }
-
-    if err := rows.Err(); err != nil {
-        return nil, err
-    }
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
 
 func (s *service) GetUsers() ([]users.User, error) {
-    rows, err := s.db.Query("select * from user")
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := s.db.Query("select * from user")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-    result := make([]users.User, 0)
-    for rows.Next() {
-        user := users.User{}
-        if err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Role); err != nil {
-            log.Fatalf("Error reading database. Err: %v", err)
-        }
-        result = append(result, user)
-    }
+	result := make([]users.User, 0)
+	for rows.Next() {
+		user := users.User{}
+		if err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Role); err != nil {
+			log.Fatalf("Error reading database. Err: %v", err)
+		}
+		result = append(result, user)
+	}
 
-    if err := rows.Err(); err != nil {
-        return nil, err
-    }
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
 
 func (s *service) Gemini() {
-    fmt.Println("do banco aqui")
+	fmt.Println("do banco aqui")
 }
-
