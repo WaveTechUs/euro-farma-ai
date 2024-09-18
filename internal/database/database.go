@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+//	"os/user"
 	"strconv"
 	"time"
 
@@ -18,15 +19,11 @@ import (
 type Service interface {
 	Health() map[string]string
 	HelloWorld() map[string]string
-	GetUserTest() map[string]string
 	Gemini()
-	// Close terminates the database connection.
-	// It returns an error if the connection cannot be closed.
-	Close() error
-	GetTeste() (map[string]string, error)
 	GetUsers() ([]users.User, error)
-
 	GetSurveys() ([]surveys.Survey, error)
+    PostUser(users.User)
+    GetUser(string) (users.User, error)
 }
 
 type service struct {
@@ -146,50 +143,9 @@ func (s *service) HelloWorld() map[string]string {
 	return resp
 }
 
-func (s *service) GetUserTest() map[string]string {
-	resp := make(map[string]string)
-	resp["id"] = "1"
-	resp["name"] = "jose"
-	resp["email"] = "j@j.com"
-	resp["password"] = "123"
-	resp["role"] = "admin"
-	return resp
-}
-
-// Close closes the database connection.
-// It logs a message indicating the disconnection from the specific database.
-// If the connection is successfully closed, it returns nil.
-// If an error occurs while closing the connection, it returns the error.
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
-}
-
-func (s *service) GetTeste() (map[string]string, error) {
-	stats := make(map[string]string)
-	stats["message"] = "banco"
-
-	rows, err := s.db.Query("select * from test_table")
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-	defer rows.Close()
-
-	result := make(map[string]string)
-	for rows.Next() {
-		var id int
-		var name string
-		if err := rows.Scan(&id, &name); err != nil {
-			log.Fatalf("error handling JSON marshal. Err: %v", err)
-		}
-		result[strconv.Itoa(id)] = name
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return result, nil
 }
 
 func (s *service) GetUsers() ([]users.User, error) {
@@ -208,12 +164,35 @@ func (s *service) GetUsers() ([]users.User, error) {
 		result = append(result, user)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
 	return result, nil
 }
+
+func (s *service) PostUser(newUser users.User) {
+    query := "insert into `user` (`name`, `email`,`password`,`role`) values (?,?,?,?)"
+    insertResult, err := s.db.ExecContext(context.Background(), query, newUser.Name, newUser.Email, newUser.Password, newUser.Role)
+    if err!=nil{
+        log.Fatalf("Error inserting database. Err: %v", err)
+    }
+    id, err := insertResult.LastInsertId()
+    if err!=nil{
+        log.Fatalf("Error inserting database. Err: %v", err)
+    }
+    log.Print("Novo user:", id)
+}
+func (s *service) GetUser(userEmail string) (users.User, error){
+     
+    query := "select * from user where email = ? "
+    row := s.db.QueryRowContext(context.Background(), query, userEmail)
+    user := users.User{}
+    if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.Role); err != nil {
+        return users.User{}, err
+    }
+    return user, nil 
+}
+
 
 func (s *service) Gemini() {
 	fmt.Println("do banco aqui")

@@ -1,14 +1,13 @@
 import axios from 'axios';
-import { useGoTo } from '@/composables/Utils';
 
 export async function getUser(emails, passwords) {
     //padrão NÃO DELETAR
-    // const email = "j@j.com"
-    // const password = "123"
     const email = emails
     const password = passwords
+    //const email = "j@j.com"
+    //const password = "123"
     try {
-        const response = await axios.post('http://localhost:8080/user/test/login', 
+        const response = await axios.post('http://localhost:8080/user/login', 
         {
             email: email,
             password: password

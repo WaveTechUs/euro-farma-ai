@@ -2,51 +2,17 @@
 import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo, useToast } from '@/composables/Utils';
-import { getUser } from '@/composables/User';
-// const teste = async () => {
-//     const get = await getUser('j@j.com', '123')
+import { authUser } from  '@/composables/Login';
 //     console.log(get);
-
-//     if (get) {
-//         navigator.clipboard.writeText(get)
-//             .then(() => {
-//                 useToast().success('Seja bem vindo de volta!', {
-//                     timeout: 1500,
-//                     style: {
-//                         fontSize: '16px',
-//                         width: '250px',
-//                         height: '50px'
-//                     }
-//                 })
-//                 console.log('Texto copiado com sucesso!');
-//                 useGoTo('/dashboard')
-
-//             })
-//             .catch((error) => {
-
-//                 console.error('Falha ao copiar o texto:', error);
-//             });
-//     }else{
-//         useToast().error('Deu erro fera', {
-//                     timeout: 1500,
-//                     style: {
-//                         fontSize: '16px',
-//                         width: '250px',
-//                         height: '50px'
-//                     }
-//                 })
-//     }
-
-// }
-const teste = async () => {
-    useGoTo('/dashboard')
+//const teste = async () => {
+//   useGoTo('/dashboard')
 
 
-}
-onMounted(async () => {
+//}
+//onMounted(async () => {
     // await teste()
 
-})
+//})
 </script>
 
 <template>
@@ -57,13 +23,13 @@ onMounted(async () => {
             <form class="flex flex-col  w-full  h-auto">
                 <div class="flex flex-col  h-auto p-1   rounded-lg ">
                     <label for="email" class="block text-md font-semibold text-gray-700 ">Email</label>
-                    <input type="email" id="email" name="email" required
+                    <input type="email" id="email" name="email" required v-model="email"
                         class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                 </div>
 
                 <div class="flex flex-col mb:2  h-auto p-1 mt-4 rounded-lg ">
                     <label for="password" class="block text-md font-semibold text-gray-700 mb-1">Senha</label>
-                    <input type="password" id="password" name="password" required
+                    <input type="password" id="password" name="password" required v-model="password"
                         class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                     <a href="#"
                         class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700">Esqueceu
@@ -75,7 +41,7 @@ onMounted(async () => {
                         class="text-sm w-3/5   align-middle justify-center pt-2 text-indigo-600  hover:text-indigo-700"
                         @click="useGoTo('/criar-conta')">Não
                         possui conta?</a>
-                    <button type="submit" @click="teste()"
+                    <button type="submit" @click.prevent="authUser(email, password)"
                         class="w-2/5 py-3 px-4  bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 
                         Entrar
