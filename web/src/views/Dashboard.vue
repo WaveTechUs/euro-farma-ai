@@ -1,95 +1,140 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import MainLayout from './../layout/MainLayout.vue';
 import Chart from 'chart.js/auto';
+import { GetDataDash } from '@/composables/Dashboard';
 
-const chartRef = ref(null);
-const chartRef2 = ref(null);
-const chartRef3 = ref(null);
+// API Call
+let numProjetos = ref('');
+let studies = ref([]); // Inicialize como array vazio
+let arrNames = ref([])
+let arrNamesbefore = ref([])
 
-onMounted(() => {
-    const data1 = [
-        { year: 2010, count: 10 },
-        { year: 2011, count: 20 },
-        { year: 2012, count: 15 },
-        { year: 2013, count: 25 },
-        { year: 2014, count: 22 },
-        { year: 2015, count: 30 },
-        { year: 2016, count: 28 },
-    ];
+let getDataAPi = async () => {
+    let answear = await GetDataDash();
+    numProjetos.value = answear.length;
+    studies.value = answear;
+    console.log(studies.value);
+    for (let i = 0; i < studies.value.length; i++) {
+        arrNamesbefore.value.push(studies.value[i].Topic)
+        console.log(studies.value[i].Topic);
+        
+    }
+    console.log(arrNamesbefore.value);
+    
+};
+function removeDuplicates(arr) {
+    return [...new Set(arr)];
+}
 
-    new Chart(
-        chartRef.value,
-        {
-            type: 'polarArea',
-            data: {
-                labels: data1.map(row => row.year),
-                datasets: [
-                    {
-                        label: 'Acquisitions by year',
-                        data: data1.map(row => row.count),
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }
-                ]
-            }
+
+function getYearFromDate(dateString) {
+    // Divide a string da data em partes, separando por espaço
+    const [datePart] = dateString.split(' ');
+    
+    // Divide a parte da data em ano, mês e dia, separando por hífen
+    const [year] = datePart.split('-');
+    
+    // Retorna o ano
+    return year;
+}
+// Chart references
+const chartRef5 = ref(null);
+
+// Função para contar os status
+const countStatuses = (data) => {
+    let statusCount = {
+        "Finalizado": 0,
+        "Andamento": 0,
+        "Analise": 0
+    };
+
+    data.forEach(study => {
+        if (study.Status === "Completed") {
+            statusCount["Finalizado"]++;
+        } else if (study.Status === "Ongoing") {
+            statusCount["Andamento"]++;
         }
-    );
+    });
+
+    return statusCount;
+};
 
 
-
-    new Chart(
-        chartRef3.value,
-        {
+// Função para criar o gráfico
+const createChart = (statusCounts) => {
+    if (chartRef5.value) {
+        new Chart(chartRef5.value, {
             type: 'doughnut',
             data: {
-                labels: [
-                    'Red',
-                    'Blue',
-                    'Yellow'
-                ],
+                labels: ['Finalizado', 'Andamento'],
                 datasets: [{
-                    label: 'My First Dataset',
-                    data: [300, 50, 100],
+                    label: 'Status dos Estudos',
+                    data: [statusCounts.Finalizado, statusCounts.Andamento],
                     backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(54, 162, 235)',
-                        'rgb(255, 205, 86)'
+                        'rgb(255, 99, 132)', // Cor para 'Finalizado'
+                        'rgb(54, 162, 235)', // Cor para 'Andamento'
+                        // Cor para 'Análise'
                     ],
                     hoverOffset: 4
                 }]
             }
+        });
+    }
+};
+const chartRef2 = ref(null);
+const chartRef4 = ref(null);
+const chartRef6 = ref(null);
 
-        }
-    );
+// Função para contar os tópicos
+const countTopics = (data) => {
+    let topicCount = {}; // Objeto para contar tópicos dinamicamente
 
-    const data2 = [
-        { year: 2010, count: 65 },
-        { year: 2011, count: 59 },
-        { year: 2012, count: 80 },
-        { year: 2013, count: 81 },
-        { year: 2014, count: 56 },
-        { year: 2015, count: 55 },
-        { year: 2016, count: 40 },
-    ];
+    data.forEach(study => {
+        const topic = study.Topic || 'Unknown'; // Verifica se o campo Topic existe
+           if (topicCount[topic]) {
+               topicCount[topic]++;
+           } else {
+               topicCount[topic] = 1;
+           }
 
-    new Chart(
-        chartRef2.value,
-        {
-            type: 'bar',
+       
+    });
+
+    return topicCount;
+};
+const countTopicsOnGoing = (data) => {
+    let topicCount = {}; // Objeto para contar tópicos dinamicamente
+
+    data.forEach(study => {
+        const topic = study.Topic || 'Unknown'; // Verifica se o campo Topic existe
+       if(study.Status !== "Completed"){
+           if (topicCount[topic]) {
+               topicCount[topic]++;
+           } else {
+               topicCount[topic] = 1;
+           }
+
+       }
+    });
+
+    return topicCount;
+};
+
+// Função para criar o gráfico
+const createChart2 = (topicCounts) => {
+    if (chartRef5.value) {
+        new Chart(chartRef2.value, {
+            type: 'bar', // Altere para 'bar' para barras
             data: {
-                labels: data2.map(row => row.year),
-                datasets: [
-                    {
-                        label: 'Acquisitions by year',
-                        data: data2.map(row => row.count),
-                        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                        borderColor: 'rgba(153, 102, 255, 1)',
-                        borderWidth: 1
-                    }
-                ]
+                labels: Object.keys(topicCounts), // Os diferentes tópicos
+                datasets: [{
+                    label: 'Quantidade de Estudos por Tópico',
+                    data: Object.values(topicCounts), // Quantidade de estudos por tópico
+                    backgroundColor: 'rgb(75, 192, 192)', // Cor para as barras
+                    hoverOffset: 4
+                }]
             },
             options: {
                 scales: {
@@ -97,11 +142,106 @@ onMounted(() => {
                         beginAtZero: true
                     }
                 }
-            },
+            }
+        });
+    }
+};
+// Função para contar os Date
+const countDate = (data) => {
+    let dateCount = {}; // Objeto para contar tópicos dinamicamente
+
+    data.forEach(study => {
+        const dates = getYearFromDate(study.CreatedAt) || 'Unknown'; // Verifica se o campo Topic existe
+
+        if (dateCount[dates]) {
+            dateCount[dates]++;
+        } else {
+            dateCount[dates] = 1;
         }
-    );
+    });
+
+    return dateCount;
+};
+
+// Função para criar o gráfico
+
+const createChart3 = (topicCounts) => {
+    if (chartRef4.value) {
+        new Chart(chartRef4.value, {
+            type: 'bar', // Altere para 'bar' para barras
+            data: {
+                labels: Object.keys(topicCounts), // Os diferentes tópicos
+                datasets: [{
+                    label: 'Número de pesquisas dos ultimos anos:',
+                    data: Object.values(topicCounts), // Quantidade de estudos por tópico
+                    backgroundColor: 'rgb(75, 192, 192)', // Cor para as barras
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+};
+const createChart4 = (topicCounts) => {
+    if (chartRef6.value) {
+        new Chart(chartRef6.value, {
+            type: 'doughnut',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Status dos Estudos',
+                    data: Object.values(topicCounts), // Quantidade de estudos por tópico
+                    backgroundColor: [
+                        'rgb(255, 99, 132)', 
+                        'rgb(54, 162, 235)', 
+                        'rgb(51, 255, 87)', 
+                        'rgb(255, 51, 161)', 
+                        'rgb(255, 209, 51)', 
+                        'rgb(255, 165, 0)', 
+                        'rgb(128, 128, 128)', 
+                        'rgb(0, 128, 0)', 
+                        ' rgb(139, 69, 19)', 
+                        'rgb(50, 205, 50)', 
+                      
+                    ],
+                    hoverOffset: 4
+                }]
+            }
+        });
+    }
+};
+// Watch para detectar quando `studies` é atualizado
+watch(studies, (newVal) => {
+    if (newVal.length > 0) { // Verifica se há dados
+        const statusCounts = countStatuses(newVal);
+        const topicCounts = countTopics(newVal); // Conta tópicos dinamicamente
+        const topicDate = countDate(newVal); // Conta tópicos dinamicamente
+        const topicDateOnGoing = countTopicsOnGoing(newVal); // Conta tópicos dinamicamente
+
+        createChart(statusCounts); // Cria o gráfico quando os dados estiverem disponíveis
+        createChart2(topicCounts); // Cria o gráfico quando os dados estiverem disponíveis
+        createChart3(topicDate); // Cria o gráfico quando os dados estiverem disponíveis
+        createChart4(topicDateOnGoing); // Cria o gráfico quando os dados estiverem disponíveis
+        arrNames.value = removeDuplicates(arrNamesbefore.value)
+        console.log(arrNames.value);
+        
+    }
+});
+
+// Chamada à API quando o componente é montado
+onMounted(() => {
+    getDataAPi();
 });
 </script>
+
+
+
 
 <template>
     <MainLayout>
@@ -111,31 +251,40 @@ onMounted(() => {
                 <p>Dashboard / customers' List</p>
             </div>
 
-            <div class="w-4/6 mx-auto h-full grid grid-rows-3 grid-cols-2 gap-4 p-4">
-                <!-- Container superior dividido em 4 pequenos -->
-                <div class="col-span-2 row-span-1 grid grid-cols-4 gap-4">
-                    <div class="col-span-1 rounded-2xl bg-white flex justify-center text-center items-center">
-                        <h2 class="text-5xl w-auto h-auto font-semibold ">230</h2>
-                    </div>
-                    <div class="col-span-1 rounded-2xl bg-white flex justify-center items-center">
-                        <h2 class="text-5xl w-auto h-auto font-semibold ">9.80</h2>
-                    </div>
-                    <div class="col-span-1 rounded-2xl bg-white flex justify-center items-center">
-                        <h2 class="text-5xl w-auto h-auto font-semibold ">25.690</h2>
-                    </div>
-                    <div class="col-span-1 rounded-2xl bg-white flex justify-center items-center"> <canvas
-                            class="h-screen" ref="chartRef3"></canvas>
-                    </div>
+            <div class="w-5/6 mx-auto h-full grid grid-rows-2 grid-cols-4 gap-4 p-4">
+                <!-- Primeira linha -->
+                <div class="col-span-1 rounded-2xl bg-white flex  text-center flex-col items-center">
+                    <h2 class="text-2xl w-auto  h-auto text-center mt-10 mb-10 font-semibold ">Número de Pesquisas</h2>
+
+                    <h2 class="text-5xl w-auto h-auto font-semibold ">{{ numProjetos }}</h2>
                 </div>
-                <!-- Segundo container ocupando 1 coluna e 2 linhas -->
-                <div class="col-span-1 row-span-2 rounded-2xl bg-white flex justify-center items-center">
+                <div class="col-span-1 rounded-2xl bg-white flex justify-center items-center">
+                    <canvas class="h-screen" ref="chartRef5"></canvas>
+                </div>
+                <div class="col-span-2 rounded-2xl bg-white flex justify-center items-center">
+                    <canvas style="" ref="chartRef4"></canvas>
+                </div>
+
+                <!-- Segunda linha -->
+                <div class="col-span-2 rounded-2xl bg-white flex justify-center text-center items-center">
                     <canvas class="h-screen" ref="chartRef2"></canvas>
+
                 </div>
-                <!-- Terceiro container ocupando 1 coluna e 2 linhas -->
-                <div class="col-span-1 row-span-2 rounded-2xl bg-white flex justify-center items-center">
-                    <canvas style="" ref="chartRef"></canvas>
+                <div class="col-span-1 rounded-2xl bg-white flex justify-center flex-col items-center">
+                    <h2 class="text-xl w-auto h-auto text-center m-2 font-semibold ">Pesquisas por tópicos</h2>
+
+                    <canvas style="" ref="chartRef6"></canvas>
+
+                </div>
+                <div class="col-span-1 p-2 rounded-2xl bg-white flex justify-center flex-col items-center">
+                    <h2 class="text-xl w-auto h-auto text-center m-2 font-semibold ">Pesquisas</h2>
+                    <ul v-for="i in arrNames.slice(0, 5) " class="">
+                        <li class="h-5 py-0 my-0 ">{{i}}</li>
+                    </ul>
+
                 </div>
             </div>
+
         </div>
     </MainLayout>
 </template>
