@@ -2,7 +2,7 @@ package survey
 
 type Survey struct {
 	Id          int
-	CreatedAt   []uint8
+	CreatedAt   string
 	Description string
 	Topic       string
 	Status      string
