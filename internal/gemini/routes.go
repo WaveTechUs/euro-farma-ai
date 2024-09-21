@@ -3,13 +3,15 @@ package gemini
 import (
 	"context"
 	"encoding/json"
-	"log"
-	"net/http"
-	"os"
-
+	S "farmaIA/internal/survey"
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/generative-ai-go/genai"
 	"google.golang.org/api/option"
+	"log"
+	"net/http"
+	"os"
+	"strings"
 )
 
 type Handler struct {
@@ -24,9 +26,9 @@ func (h *Handler) RegisterRoutes(r *chi.Mux) {
 	r.Post("/gemini", h.geminiHandler)
 }
 
-func (s *Handler) geminiHandler(w http.ResponseWriter, r *http.Request) {
-	input := s.getBody(r)
-	jsonResp := s.Gemini(input)
+func (h *Handler) geminiHandler(w http.ResponseWriter, r *http.Request) {
+	input := h.getBody(r)
+	jsonResp := h.Gemini(input)
 	_, _ = w.Write(jsonResp)
 }
 
@@ -40,7 +42,7 @@ func (h *Handler) Gemini(body GeminiRequest) []byte {
 	model := configureGemini(client)
 	cs := model.StartChat()
 
-	makeHistory(cs, body.History)
+	h.makeHistory(cs, body.History)
 
 	res, err := cs.SendMessage(ctx, genai.Text(body.Text))
 	if err != nil {
@@ -51,7 +53,8 @@ func (h *Handler) Gemini(body GeminiRequest) []byte {
 	return jsonResp
 }
 
-func makeHistory(cs *genai.ChatSession, gr []History) {
+func (h *Handler) makeHistory(cs *genai.ChatSession, gr []History) {
+	gr = h.setPreInformation(gr)
 	cs.History = make([]*genai.Content, len(gr))
 
 	for i, item := range gr {
@@ -62,6 +65,37 @@ func makeHistory(cs *genai.ChatSession, gr []History) {
 			Role: item.Role,
 		}
 	}
+}
+
+func (h *Handler) setPreInformation(gr []History) []History {
+	surveys, err := h.service.GetSurveys()
+	if err != nil {
+		log.Fatalf("Error on getting surveys. Err: %v", err)
+	}
+
+	surveysStr := SurveysToString(surveys)
+	information := "Se você não souber a resposta diga que não sabe, e responde apenas o que está no seu escopo, o seu escopo é: Respostas sobre pesquisas farmacêuticas e com base nos seguintes dados."
+	information += surveysStr
+
+	command := History{OldText: information, Role: "user"}
+	respCommand := History{OldText: "Ok", Role: "model"}
+
+	gr = append([]History{command, respCommand}, gr...)
+	return gr
+}
+
+func ToString(s S.Survey) string {
+	return fmt.Sprintf("Id: %d\nCreatedAt: %s\nDescription: %s\nTopic: %s\nStatus: %s\nSummary: %s\nConclusions: %s\nMethod: %s\nKeywords: %s\n",
+		s.Id, s.CreatedAt, s.Description, s.Topic, s.Status, s.Summary, s.Conclusions, s.Method, s.Keywords)
+}
+
+func SurveysToString(surveys []S.Survey) string {
+	var builder strings.Builder
+	for _, survey := range surveys {
+		builder.WriteString(ToString(survey))
+		builder.WriteString("\n")
+	}
+	return builder.String()
 }
 
 func configureGemini(client *genai.Client) *genai.GenerativeModel {
@@ -86,10 +120,10 @@ func getJsonReponse(resp *genai.GenerateContentResponse) []byte {
 }
 
 func (s *Handler) getBody(r *http.Request) GeminiRequest {
-    gr := GeminiRequest{}
-    err := json.NewDecoder(r.Body).Decode(&gr)
-    if err != nil {
-        log.Fatalf("Error on decoding request. Err: %v", err)
-    }
-    return gr
+	gr := GeminiRequest{}
+	err := json.NewDecoder(r.Body).Decode(&gr)
+	if err != nil {
+		log.Fatalf("Error on decoding request. Err: %v", err)
+	}
+	return gr
 }

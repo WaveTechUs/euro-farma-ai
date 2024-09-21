@@ -6,7 +6,7 @@ type Survey struct {
 	Description string
 	Topic       string
 	Status      string
-	Summary      string
+	Summary     string
 	Conclusions string
 	Method      string
 	Keywords    string
