@@ -107,10 +107,12 @@ const countTopics = (data) => {
 const countTopicsOnGoing = (data) => {
     let topicCount = {}; // Objeto para contar tópicos dinamicamente
 
+
     data.forEach(study => {
-        const topic = study.Topic || 'Unknown'; // Verifica se o campo Topic existe
+        const topic = study.Topic  || 'Unknown'; // Verifica se o campo Topic existe
        if(study.Status !== "Completed"){
            if (topicCount[topic]) {
+
                topicCount[topic]++;
            } else {
                topicCount[topic] = 1;
@@ -189,13 +191,22 @@ const createChart3 = (topicCounts) => {
     }
 };
 const createChart4 = (topicCounts) => {
+    console.log(topicCounts);
+    
     if (chartRef6.value) {
         new Chart(chartRef6.value, {
             type: 'doughnut',
+            options:{
+                plugins:{
+                    legend:{
+                        display: false,
+                    },
+                },
+            },
             data: {
-                labels: [],
+                labels: Object.keys(topicCounts),
                 datasets: [{
-                    label: 'Status dos Estudos',
+                    label: "",
                     data: Object.values(topicCounts), // Quantidade de estudos por tópico
                     backgroundColor: [
                         'rgb(255, 99, 132)', 
@@ -245,13 +256,13 @@ onMounted(() => {
 
 <template>
     <MainLayout>
-        <div class="w-full h-screen   border bg-slate-200 flex flex-col">
-            <div class="h-12 ml-20 mb-20 w-2/3">
+        <div class="w-full h-full   border bg-slate-200 flex flex-col">
+            <div class="h-8 ml-20 mb-20 w-2/3">
                 <h2 class="text-4xl mb-2">DashBoard</h2>
                 <p>Dashboard / customers' List</p>
             </div>
 
-            <div class="w-5/6 mx-auto h-full grid grid-rows-2 grid-cols-4 gap-4 p-4">
+            <div class="w-8/12 mx-auto h-auto grid grid-rows-2 grid-cols-4 gap-4 pb-4 px-4">
                 <!-- Primeira linha -->
                 <div class="col-span-1 rounded-2xl bg-white flex  text-center flex-col items-center">
                     <h2 class="text-2xl w-auto  h-auto text-center mt-10 mb-10 font-semibold ">Número de Pesquisas</h2>
@@ -278,8 +289,8 @@ onMounted(() => {
                 </div>
                 <div class="col-span-1 p-2 rounded-2xl bg-white flex justify-center flex-col items-center">
                     <h2 class="text-xl w-auto h-auto text-center m-2 font-semibold ">Pesquisas</h2>
-                    <ul v-for="i in arrNames.slice(0, 5) " class="">
-                        <li class="h-5 py-0 my-0 ">{{i}}</li>
+                    <ul v-for="(item, index) in arrNames.slice(0, 5) " class="">
+                        <li class="h-5 py-0 my-0 ">{{index + 1}} - {{item}}</li>
                     </ul>
 
                 </div>

@@ -2,6 +2,21 @@
 import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo } from '@/composables/Utils';
+import { postUser } from '@/composables/User';
+import { authUserPost } from '@/composables/Login';
+
+let nome = ref('')
+let email = ref('')
+let password = ref('')
+let confirm = ref('')
+const confirCreate = async (nome, email, password, confirm)=>{
+    console.log(nome, email, password, confirm);
+    
+    if(confirm == password){
+        let post = await authUserPost(email, password, nome)
+    }
+
+}
 
 
 </script>
@@ -16,13 +31,13 @@ import { useGoTo } from '@/composables/Utils';
 
                     <div class="flex flex-col  h-auto p-1   rounded-lg ">
                         <label for="nome" class="block text-md font-semibold text-gray-700 ">Nome</label>
-                        <input type="nome" id="nome" name="nome" required
+                        <input type="nome" id="nome" v-model="nome" name="nome" required
                             class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                     </div>
 
                     <div class="flex flex-col mb:2  h-auto p-1 mt-4 rounded-lg ">
                         <label for="password" class="block text-md font-semibold text-gray-700 mb-1">Senha</label>
-                        <input type="password" id="password" name="password" required
+                        <input type="password" id="password" v-model="password" name="password" required
                             class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
 
                     </div>
@@ -32,20 +47,20 @@ import { useGoTo } from '@/composables/Utils';
 
                     <div class="flex flex-col  h-auto p-1   rounded-lg ">
                         <label for="email" class="block text-md font-semibold text-gray-700 ">Email</label>
-                        <input type="email" id="email" name="email" required
+                        <input type="email" id="email" v-model="email" name="email" required
                             class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
                     </div>
 
                     <div class="flex flex-col mb:2  h-auto p-1 mt-4 rounded-lg ">
                         <label for="confirm-password" class="block text-md font-semibold text-gray-700 mb-1">Confirmar senha</label>
-                        <input type="confirm-password" id="confirm-password" name="confirm-password" required
+                        <input type="password" id="confirm-password" v-model="confirm" name="confirm-password" required
                             class="block shadow-md w-full h-12 px-3 py-4 border border-gray-300 rounded-md  focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
 
                     </div>
                     <div
                         class="flex   flex-row mt-10 xl:mt-8 justify-end align-middle w-full   px-2  h-auto  rounded-lg ">
 
-                        <button type="submit" @click="useGoTo('/')"
+                        <button type="submit" @click.prevent="confirCreate(nome, email, password, confirm)"
                             class="w-2/5 py-3 px-4  bg-indigo-600 text-white font-semibold rounded-md shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
 
                             Entrar
