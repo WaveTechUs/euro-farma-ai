@@ -44,6 +44,9 @@ func SetCookie(token string, w http.ResponseWriter) {
 		Value:    token,
 		Expires:  time.Now().Add(time.Hour * 24),
 		HttpOnly: true,
+		Secure:   true,
+		Domain:   "localhost:5173",
+		SameSite: http.SameSiteNoneMode,
 	}
 
 	http.SetCookie(w, &cookie)

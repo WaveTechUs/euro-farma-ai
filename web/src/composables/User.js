@@ -11,7 +11,11 @@ export async function getUser(emails, passwords) {
         {
             email: email,
             password: password
-        });
+        },
+        {
+            withCredentials: true 
+        }
+        );
         console.log('Status:', response.status);
         console.log('Data:', response.data);
         return response.data

@@ -19,9 +19,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
     r.Use(cors.Handler( cors.Options{
-    AllowedOrigins: []string{"*"},
+    AllowedOrigins: []string{"http://localhost:5173"},
     AllowedMethods: []string{"GET", "POST","PUT","DELETE","OPTIONS"},
     AllowedHeaders: []string{"Content-type"},
+    AllowCredentials: true,
     }))
     
     service := database.New()
