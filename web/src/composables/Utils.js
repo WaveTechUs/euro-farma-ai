@@ -18,6 +18,5 @@ export const useToast = () => {
 
 export const useCreateLocalStorage = (type, use) => {
   const userString = JSON.stringify(use);
-  // localStorage.setItem('user', userString);
   localStorage.setItem(type, userString);
 }

@@ -1,8 +1,6 @@
 package utils
 
 import (
-	//	"go/token"
-	//	"encoding/json"
 	"errors"
 	"net/http"
 	"os"

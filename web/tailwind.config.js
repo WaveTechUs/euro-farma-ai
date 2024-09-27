@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontSize: {
-        '4xl': '2.25rem', // Sem line-height
+        '4xl': '2.25rem',
       },
       fontFamily: {
         'sans': ['Poppins', 'sans-serif'],        

@@ -3,16 +3,7 @@ import { ref, onMounted, watch } from 'vue';
 import '@/assets/index.css';
 import { useGoTo, useToast } from '@/composables/Utils';
 import { authUser } from  '@/composables/Login';
-//     console.log(get);
-//const teste = async () => {
-//   useGoTo('/dashboard')
 
-
-//}
-//onMounted(async () => {
-    // await teste()
-
-//})
 </script>
 
 <template>

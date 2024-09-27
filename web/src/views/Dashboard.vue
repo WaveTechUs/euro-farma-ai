@@ -5,9 +5,8 @@ import MainLayout from './../layout/MainLayout.vue';
 import Chart from 'chart.js/auto';
 import { GetDataDash } from '@/composables/Dashboard';
 
-// API Call
 let numProjetos = ref('');
-let studies = ref([]); // Inicialize como array vazio
+let studies = ref([]);
 let arrNames = ref([])
 let arrNamesbefore = ref([])
 
@@ -30,19 +29,15 @@ function removeDuplicates(arr) {
 
 
 function getYearFromDate(dateString) {
-    // Divide a string da data em partes, separando por espaço
     const [datePart] = dateString.split(' ');
     
-    // Divide a parte da data em ano, mês e dia, separando por hífen
     const [year] = datePart.split('-');
-    
-    // Retorna o ano
+
     return year;
 }
-// Chart references
+
 const chartRef5 = ref(null);
 
-// Função para contar os status
 const countStatuses = (data) => {
     let statusCount = {
         "Finalizado": 0,
@@ -62,7 +57,6 @@ const countStatuses = (data) => {
 };
 
 
-// Função para criar o gráfico
 const createChart = (statusCounts) => {
     if (chartRef5.value) {
         new Chart(chartRef5.value, {
@@ -73,9 +67,8 @@ const createChart = (statusCounts) => {
                     label: 'Status dos Estudos',
                     data: [statusCounts.Finalizado, statusCounts.Andamento],
                     backgroundColor: [
-                        'rgb(255, 99, 132)', // Cor para 'Finalizado'
-                        'rgb(54, 162, 235)', // Cor para 'Andamento'
-                        // Cor para 'Análise'
+                        'rgb(255, 99, 132)',
+                        'rgb(54, 162, 235)',
                     ],
                     hoverOffset: 4
                 }]
@@ -87,12 +80,12 @@ const chartRef2 = ref(null);
 const chartRef4 = ref(null);
 const chartRef6 = ref(null);
 
-// Função para contar os tópicos
+
 const countTopics = (data) => {
-    let topicCount = {}; // Objeto para contar tópicos dinamicamente
+    let topicCount = {};
 
     data.forEach(study => {
-        const topic = study.Topic || 'Unknown'; // Verifica se o campo Topic existe
+        const topic = study.Topic || 'Unknown';
            if (topicCount[topic]) {
                topicCount[topic]++;
            } else {
@@ -105,11 +98,11 @@ const countTopics = (data) => {
     return topicCount;
 };
 const countTopicsOnGoing = (data) => {
-    let topicCount = {}; // Objeto para contar tópicos dinamicamente
+    let topicCount = {};
 
 
     data.forEach(study => {
-        const topic = study.Topic  || 'Unknown'; // Verifica se o campo Topic existe
+        const topic = study.Topic  || 'Unknown';
        if(study.Status !== "Completed"){
            if (topicCount[topic]) {
 
@@ -124,17 +117,16 @@ const countTopicsOnGoing = (data) => {
     return topicCount;
 };
 
-// Função para criar o gráfico
 const createChart2 = (topicCounts) => {
     if (chartRef5.value) {
         new Chart(chartRef2.value, {
-            type: 'bar', // Altere para 'bar' para barras
+            type: 'bar',
             data: {
-                labels: Object.keys(topicCounts), // Os diferentes tópicos
+                labels: Object.keys(topicCounts),
                 datasets: [{
                     label: 'Quantidade de Estudos por Tópico',
-                    data: Object.values(topicCounts), // Quantidade de estudos por tópico
-                    backgroundColor: 'rgb(75, 192, 192)', // Cor para as barras
+                    data: Object.values(topicCounts),
+                    backgroundColor: 'rgb(75, 192, 192)',
                     hoverOffset: 4
                 }]
             },
@@ -148,12 +140,12 @@ const createChart2 = (topicCounts) => {
         });
     }
 };
-// Função para contar os Date
+
 const countDate = (data) => {
-    let dateCount = {}; // Objeto para contar tópicos dinamicamente
+    let dateCount = {};
 
     data.forEach(study => {
-        const dates = getYearFromDate(study.CreatedAt) || 'Unknown'; // Verifica se o campo Topic existe
+        const dates = getYearFromDate(study.CreatedAt) || 'Unknown';
 
         if (dateCount[dates]) {
             dateCount[dates]++;
@@ -165,18 +157,16 @@ const countDate = (data) => {
     return dateCount;
 };
 
-// Função para criar o gráfico
-
 const createChart3 = (topicCounts) => {
     if (chartRef4.value) {
         new Chart(chartRef4.value, {
-            type: 'bar', // Altere para 'bar' para barras
+            type: 'bar',
             data: {
-                labels: Object.keys(topicCounts), // Os diferentes tópicos
+                labels: Object.keys(topicCounts),
                 datasets: [{
                     label: 'Número de pesquisas dos ultimos anos:',
-                    data: Object.values(topicCounts), // Quantidade de estudos por tópico
-                    backgroundColor: 'rgb(75, 192, 192)', // Cor para as barras
+                    data: Object.values(topicCounts),
+                    backgroundColor: 'rgb(75, 192, 192)',
                     hoverOffset: 4
                 }]
             },
@@ -207,7 +197,7 @@ const createChart4 = (topicCounts) => {
                 labels: Object.keys(topicCounts),
                 datasets: [{
                     label: "",
-                    data: Object.values(topicCounts), // Quantidade de estudos por tópico
+                    data: Object.values(topicCounts),
                     backgroundColor: [
                         'rgb(255, 99, 132)', 
                         'rgb(54, 162, 235)', 
@@ -227,32 +217,28 @@ const createChart4 = (topicCounts) => {
         });
     }
 };
-// Watch para detectar quando `studies` é atualizado
-watch(studies, (newVal) => {
-    if (newVal.length > 0) { // Verifica se há dados
-        const statusCounts = countStatuses(newVal);
-        const topicCounts = countTopics(newVal); // Conta tópicos dinamicamente
-        const topicDate = countDate(newVal); // Conta tópicos dinamicamente
-        const topicDateOnGoing = countTopicsOnGoing(newVal); // Conta tópicos dinamicamente
 
-        createChart(statusCounts); // Cria o gráfico quando os dados estiverem disponíveis
-        createChart2(topicCounts); // Cria o gráfico quando os dados estiverem disponíveis
-        createChart3(topicDate); // Cria o gráfico quando os dados estiverem disponíveis
-        createChart4(topicDateOnGoing); // Cria o gráfico quando os dados estiverem disponíveis
+watch(studies, (newVal) => {
+    if (newVal.length > 0) {
+        const statusCounts = countStatuses(newVal);
+        const topicCounts = countTopics(newVal);
+        const topicDate = countDate(newVal);
+        const topicDateOnGoing = countTopicsOnGoing(newVal);
+
+        createChart(statusCounts);
+        createChart2(topicCounts);
+        createChart3(topicDate);
+        createChart4(topicDateOnGoing);
         arrNames.value = removeDuplicates(arrNamesbefore.value)
         console.log(arrNames.value);
         
     }
 });
 
-// Chamada à API quando o componente é montado
 onMounted(() => {
     getDataAPi();
 });
 </script>
-
-
-
 
 <template>
     <MainLayout>
