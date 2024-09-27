@@ -14,19 +14,16 @@ let getDataAPi = async () => {
     let answear = await GetDataDash();
     numProjetos.value = answear.length;
     studies.value = answear;
-    console.log(studies.value);
+
     for (let i = 0; i < studies.value.length; i++) {
         arrNamesbefore.value.push(studies.value[i].Topic)
-        console.log(studies.value[i].Topic);
-        
     }
-    console.log(arrNamesbefore.value);
     
 };
+
 function removeDuplicates(arr) {
     return [...new Set(arr)];
 }
-
 
 function getYearFromDate(dateString) {
     const [datePart] = dateString.split(' ');
@@ -230,8 +227,6 @@ watch(studies, (newVal) => {
         createChart3(topicDate);
         createChart4(topicDateOnGoing);
         arrNames.value = removeDuplicates(arrNamesbefore.value)
-        console.log(arrNames.value);
-        
     }
 });
 

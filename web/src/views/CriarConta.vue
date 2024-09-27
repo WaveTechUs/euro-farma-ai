@@ -10,14 +10,10 @@ let email = ref('')
 let password = ref('')
 let confirm = ref('')
 const confirCreate = async (nome, email, password, confirm)=>{
-    console.log(nome, email, password, confirm);
-    
     if(confirm == password){
         let post = await authUserPost(email, password, nome)
     }
-
 }
-
 
 </script>
 

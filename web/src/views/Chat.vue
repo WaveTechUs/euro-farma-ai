@@ -13,7 +13,6 @@ const testando = async () => {
     nextTick(() => {
         setTimeout(() => {
             if (messageContainer.value) {
-                console.log('Rolling to bottom');
                 messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
             } else {
                 console.log('messageContainer is null');
@@ -38,12 +37,9 @@ const testando = async () => {
         history.value.push(modelResponse);
     }
 
-    console.log(history.value);
-    
     nextTick(() => {
         setTimeout(() => {
             if (messageContainer.value) {
-                console.log('Rolling to bottom');
                 messageContainer.value.scrollTop = messageContainer.value.scrollHeight;
             } else {
                 console.log('messageContainer is null');
@@ -52,12 +48,7 @@ const testando = async () => {
     });
 };
 
-
-
-
-
 const formatAnswear = (resp) => {
-
     const answear = resp.Parts.join('');
     let formattedAnswerOne = answear.replace(/\n/g, '<br>');
     const formattedAnswer = formattedAnswerOne.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
